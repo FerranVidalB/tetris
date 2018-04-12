@@ -24,23 +24,25 @@ public class Board extends JPanel implements ActionListener {
         public void keyPressed(KeyEvent e) {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_LEFT:
-                    if(canMoveTo(currentRow, currentCol-1))
-                    currentCol--;
+                    if (canMoveTo(currentRow, currentCol - 1)) {
+                        currentCol--;
+                    }
 // whatever
                     break;
                 case KeyEvent.VK_RIGHT:
 // whatever         
-                    if(canMoveTo(currentRow, currentCol+1))
-                    currentCol++;
+                    if (canMoveTo(currentRow, currentCol + 1)) {
+                        currentCol++;
+                    }
                     break;
                 case KeyEvent.VK_UP:
 // whatever
                     break;
                 case KeyEvent.VK_DOWN:
 // whatever 
-                    if(canMoveTo(currentRow+1, currentCol))
-                    
-                    currentRow++;
+                    if (canMoveTo(currentRow + 1, currentCol)) {
+                        currentRow++;
+                    }
                     break;
                 default:
                     break;
@@ -50,7 +52,7 @@ public class Board extends JPanel implements ActionListener {
     }
     public static final int NUM_ROWS = 22;
     public static final int NUM_COLS = 10;
-
+    public static final int INIT_ROW = -2;
     private Tetrominoes[][] matrix;
     private int deltaTime;
     private Shape currentShape;
@@ -67,7 +69,7 @@ public class Board extends JPanel implements ActionListener {
         timer = new Timer(deltaTime, this);
         MyKeyAdapter keyb = new MyKeyAdapter();
         addKeyListener(keyb);
-        
+
     }
 
     public void initValues() {
@@ -75,17 +77,14 @@ public class Board extends JPanel implements ActionListener {
         cleanBoard();
         deltaTime = 500;
         currentShape = new Shape();
-        currentRow = 0;
+        currentRow = INIT_ROW;
         currentCol = NUM_COLS / 2;
     }
 
     public void initGame() {
-
-        initValues();
-        
-        
         addKeyListener(keyb);
-        
+        initValues();
+
         timer.start();
 
     }
@@ -98,30 +97,47 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
-     private boolean canMoveTo(int newRow, int newCol){
-        if (newCol+currentShape.getXmin()<0 || newCol+currentShape.getXmax()>=NUM_COLS || currentRow+currentShape.getYmin()>=NUM_ROWS-2){
+    private boolean canMoveTo(int newRow, int newCol) {
+        if (newCol + currentShape.getXmin() < 0 || newCol + currentShape.getXmax() >= NUM_COLS || currentRow + currentShape.getYmax() >= NUM_ROWS - 1) {
+
             return false;
+
         }
-            
-         return true;
+        ifThereIsAPiece(newRow, newCol);
+        return true;
     }
+
+    private boolean ifThereIsAPiece(int newRow, int newCol) {
+        //Vamos a comparar las coordenadas de la pieza actual con la matriz(si esta pintada con piezas, no avancara)
+        
+        return true;
+    }
+
     //Game Main Loop
     @Override
     public void actionPerformed(ActionEvent ae) {
-        if(canMoveTo(currentRow+1, currentCol)){
-                    
-                    currentRow++;
-        }
-        repaint();
-        
-        /*if(currentRow==NUM_ROWS){
-            System.out.println("Board.initGame()");
+        if (canMoveTo(currentRow + 1, currentCol)) {
+
+            currentRow++;
+            repaint();
+        } else {
+            moveCurrentShapeToMatrix();
             currentShape = new Shape();
-            currentRow=0;
-        }*/
+            currentRow = INIT_ROW;
+            currentCol = NUM_COLS / 2;
+        }
+
     }
-   
-    public void keyPressed(KeyEvent evt){
+
+    public void moveCurrentShapeToMatrix() {
+        int[][] squaresArray = currentShape.getCoordinates();
+        for (int point = 0; point <= 3; point++) {
+            matrix[currentRow + squaresArray[point][1]][currentCol + squaresArray[point][0]] = currentShape.getShape();
+
+        }
+    }
+
+    public void keyPressed(KeyEvent evt) {
         keyb.keyPressed(evt);
     }
 
@@ -129,9 +145,16 @@ public class Board extends JPanel implements ActionListener {
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        //drawBoard(g);
-        if(currentShape!=null)
-        drawCurrentShape(g);
+        drawBoard(g);
+        if (currentShape != null) {
+            drawCurrentShape(g);
+        }
+        drawBorder(g);
+    }
+
+    public void drawBorder(Graphics g) {
+        g.setColor(Color.red);
+        g.drawRect(0, 0, NUM_COLS * squareWidth(), NUM_ROWS * squareHeight());
     }
 
     public void drawCurrentShape(Graphics g) {
@@ -140,6 +163,15 @@ public class Board extends JPanel implements ActionListener {
             drawSquare(g, currentRow + squaresArray[point][1], currentCol + squaresArray[point][0], currentShape.getShape());
         }
 
+    }
+
+    public void drawBoard(Graphics g) {
+        for (int row = 0; row < NUM_ROWS; row++) {
+            for (int col = 0; col < NUM_COLS; col++) {
+
+                drawSquare(g, row, col, matrix[row][col]);
+            }
+        }
     }
 
     private void drawSquare(Graphics g, int row, int col, Tetrominoes shape) {
