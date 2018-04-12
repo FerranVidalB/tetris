@@ -39,6 +39,12 @@ public class Tetris extends javax.swing.JFrame {
         scoreBoard.setText("scoreBoard1");
         getContentPane().add(scoreBoard, java.awt.BorderLayout.PAGE_END);
 
+        board.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                boardKeyPressed(evt);
+            }
+        });
+
         javax.swing.GroupLayout boardLayout = new javax.swing.GroupLayout(board);
         board.setLayout(boardLayout);
         boardLayout.setHorizontalGroup(
@@ -78,6 +84,12 @@ public class Tetris extends javax.swing.JFrame {
     private void jMenuInitGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuInitGameActionPerformed
        board.initGame();
     }//GEN-LAST:event_jMenuInitGameActionPerformed
+
+    private void boardKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_boardKeyPressed
+        // TODO add your handling code here:
+       
+       
+    }//GEN-LAST:event_boardKeyPressed
 
     /**
      * @param args the command line arguments

@@ -46,4 +46,43 @@ public class Shape {
     public Tetrominoes getShape() {
         return pieceShape;
     }
+    public int getXmin(){
+        
+        
+        int xmin = coordinates[0][0];
+        for(int i=1;i<4;i++){
+            if(xmin>coordinates[i][0])
+                xmin=coordinates[i][0];
+        }
+        
+        return xmin;
+    }
+    public int getXmax(){
+         int xmax = coordinates[0][0];
+        for(int i=1;i<4;i++){
+            if(xmax<coordinates[i][0])
+                xmax=coordinates[i][0];
+        }
+        
+        return xmax;
+    }
+    public int getYmin(){
+         int ymin = coordinates[0][0];
+        for(int i=1;i<4;i++){
+            if(ymin>coordinates[i][1])
+                ymin=coordinates[i][1];
+        }
+        
+        return ymin;
+    }
+    public int getYmax(){
+        int ymax = coordinates[0][0];
+        for(int i=1;i<4;i++){
+            if(ymax<coordinates[i][1])
+                ymax=coordinates[i][1];
+        }
+        
+        return ymax;
+    }
+    
 }
