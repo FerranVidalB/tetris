@@ -24,23 +24,27 @@ public class Board extends JPanel implements ActionListener {
         public void keyPressed(KeyEvent e) {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_LEFT:
-                    if (canMoveTo(currentRow, currentCol - 1)) {
+                    if (canMoveTo(currentShape,currentRow, currentCol - 1)) {
                         currentCol--;
                     }
 // whatever
                     break;
                 case KeyEvent.VK_RIGHT:
 // whatever         
-                    if (canMoveTo(currentRow, currentCol + 1)) {
+                    if (canMoveTo(currentShape,currentRow, currentCol + 1)) {
                         currentCol++;
                     }
                     break;
                 case KeyEvent.VK_UP:
 // whatever
+                    Shape rotShape = currentShape.rotateRight();
+                    if(canMoveTo(rotShape ,currentRow, currentCol)){
+                        currentShape=rotShape;
+                    }
                     break;
                 case KeyEvent.VK_DOWN:
 // whatever 
-                    if (canMoveTo(currentRow + 1, currentCol)) {
+                    if (canMoveTo(currentShape,currentRow + 1, currentCol)) {
                         currentRow++;
                     }
                     break;
@@ -97,26 +101,44 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
-    private boolean canMoveTo(int newRow, int newCol) {
-        if (newCol + currentShape.getXmin() < 0 || newCol + currentShape.getXmax() >= NUM_COLS || currentRow + currentShape.getYmax() >= NUM_ROWS - 1) {
+    private boolean canMoveTo(Shape shape,int newRow, int newCol) {
+        if (newCol + shape.getXmin() < 0
+                || newCol + shape.getXmax() >= NUM_COLS
+                || currentRow + shape.getYmax() >= NUM_ROWS - 1
+                || hitWithMatrix(shape,newRow, newCol)) {
 
             return false;
 
         }
-        ifThereIsAPiece(newRow, newCol);
         return true;
+
     }
 
-    private boolean ifThereIsAPiece(int newRow, int newCol) {
+    private boolean hitWithMatrix(Shape shape,int newRow, int newCol) {
         //Vamos a comparar las coordenadas de la pieza actual con la matriz(si esta pintada con piezas, no avancara)
-        
-        return true;
+        int[][] squaresArray = shape.getCoordinates();
+        int row;
+        int col;
+
+        for (int point = 0; point <= 3; point++) {
+            row = newRow + squaresArray[point][1];
+            col = newCol + squaresArray[point][0];
+
+            if (row >= 0) {
+                if (matrix[row][col] != Tetrominoes.NoShape) {
+                    return true;
+                }
+            }
+
+        }
+
+        return false;
     }
 
     //Game Main Loop
     @Override
     public void actionPerformed(ActionEvent ae) {
-        if (canMoveTo(currentRow + 1, currentCol)) {
+        if (canMoveTo(currentShape,currentRow + 1, currentCol)) {
 
             currentRow++;
             repaint();
@@ -126,15 +148,23 @@ public class Board extends JPanel implements ActionListener {
             currentRow = INIT_ROW;
             currentCol = NUM_COLS / 2;
         }
+        
+        checkLines();
 
     }
+    public void checkLines(){
+        
+    }
+   
 
     public void moveCurrentShapeToMatrix() {
         int[][] squaresArray = currentShape.getCoordinates();
+        
         for (int point = 0; point <= 3; point++) {
             matrix[currentRow + squaresArray[point][1]][currentCol + squaresArray[point][0]] = currentShape.getShape();
 
         }
+        
     }
 
     public void keyPressed(KeyEvent evt) {
