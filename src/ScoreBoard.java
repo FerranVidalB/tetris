@@ -6,24 +6,31 @@ import javax.swing.JLabel;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author alu20925473g
  */
-public class ScoreBoard extends JLabel{
-    
+public class ScoreBoard extends JLabel implements IncrementScorer {
+
     private int score;
-    
-    
-    public ScoreBoard(){
+
+    public ScoreBoard() {
         super();
-        score=0;
+        score = 0;
     }
-    public void increment(int points){
-        score+=points;
+
+    public void increment(int points) {
+        score += points;
+        setText("" + score);
     }
-    public void reset(){
-        score=0;
+
+    public void reset() {
+        score = 0;
+        setText("" + score);
+    }
+
+    @Override
+    public int getScore() {
+        return score;
     }
 }

@@ -15,6 +15,8 @@ public class Tetris extends javax.swing.JFrame {
      */
     public Tetris() {
         initComponents();
+        board.setScorer(scoreBoard);
+        
     }
 
     /**
@@ -82,7 +84,8 @@ public class Tetris extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jMenuInitGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuInitGameActionPerformed
-       board.initGame();
+        
+        board.initGame();
     }//GEN-LAST:event_jMenuInitGameActionPerformed
 
     private void boardKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_boardKeyPressed

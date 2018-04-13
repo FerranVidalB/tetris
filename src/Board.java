@@ -48,6 +48,18 @@ public class Board extends JPanel implements ActionListener {
                         currentRow++;
                     }
                     break;
+                    case KeyEvent.VK_P:
+                        if(timer.isRunning()){
+                        timer.stop();
+                        }else{
+                            timer.start();
+                        }
+                    break;
+                    case KeyEvent.VK_ENTER:
+                        if(!timer.isRunning()){
+                        initGame();
+                        }
+                    break;
                 default:
                     break;
             }
@@ -64,7 +76,10 @@ public class Board extends JPanel implements ActionListener {
     private int currentRow;
     public MyKeyAdapter keyb;
     private Timer timer;
-
+    private IncrementScorer scorerDelegate;
+    
+    
+    
     public Board() {
         super();
         matrix = new Tetrominoes[NUM_ROWS][NUM_COLS];
@@ -74,6 +89,9 @@ public class Board extends JPanel implements ActionListener {
         MyKeyAdapter keyb = new MyKeyAdapter();
         addKeyListener(keyb);
 
+    }
+    public void setScorer(IncrementScorer scorer){
+        this.scorerDelegate=scorer;
     }
 
     public void initValues() {
@@ -88,7 +106,7 @@ public class Board extends JPanel implements ActionListener {
     public void initGame() {
         addKeyListener(keyb);
         initValues();
-
+        scorerDelegate.reset();
         timer.start();
 
     }
@@ -99,12 +117,18 @@ public class Board extends JPanel implements ActionListener {
                 matrix[row][col] = Tetrominoes.NoShape;
             }
         }
+        
+    }
+    public void gameOver(){
+        timer.stop();
+        scorerDelegate.getScore();
+        //rellenar todo el matrix en cascada utilizando cuadraditos y Añadir Game over dibujado en el matrix y la opcion de play again
     }
 
     private boolean canMoveTo(Shape shape,int newRow, int newCol) {
         if (newCol + shape.getXmin() < 0
                 || newCol + shape.getXmax() >= NUM_COLS
-                || currentRow + shape.getYmax() >= NUM_ROWS - 1
+                || newRow + shape.getYmax() >= NUM_ROWS 
                 || hitWithMatrix(shape,newRow, newCol)) {
 
             return false;
@@ -143,19 +167,64 @@ public class Board extends JPanel implements ActionListener {
             currentRow++;
             repaint();
         } else {
+            checkGameOver();
             moveCurrentShapeToMatrix();
             currentShape = new Shape();
             currentRow = INIT_ROW;
             currentCol = NUM_COLS / 2;
+            checkRows();
         }
         
-        checkLines();
+        
 
     }
-    public void checkLines(){
-        
+    public void checkGameOver(){
+         int[][] squaresArray = currentShape.getCoordinates();
+        for (int point = 0; point <= 3; point++) {
+            if(currentRow + squaresArray[point][1]<0){
+                gameOver();
+                
+            }
+            
+
+        }
     }
-   
+    
+    public void checkRows(){
+        
+        boolean clean;
+        for(int row =0;row<NUM_ROWS;row++){
+            clean=true;
+            for(int col=0;col<NUM_COLS;col++){
+                if(matrix[row][col]==Tetrominoes.NoShape){
+                    clean=false;
+                }
+            }
+            if(clean){
+                
+                cleanRow(row);
+            }
+            
+        }
+    }
+    public void cleanRow(int rowCompleted){
+        
+       for(int row =rowCompleted;row>=1;row--){
+            for(int col=0;col<NUM_COLS;col++){
+               matrix[row][col]=matrix[row-1][col];
+            }    
+        }
+       for(int col=0;col<NUM_COLS;col++){
+               matrix[0][col]=Tetrominoes.NoShape;
+            } 
+        
+        scorerDelegate.increment(100);
+       
+       repaint();
+       
+       
+    }
+    
 
     public void moveCurrentShapeToMatrix() {
         int[][] squaresArray = currentShape.getCoordinates();
