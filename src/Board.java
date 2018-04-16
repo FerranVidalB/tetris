@@ -79,20 +79,20 @@ public class Board extends JPanel implements ActionListener {
     public MyKeyAdapter keyb;
     private Timer timer;
     private IncrementScorer scorerDelegate;
-    private static final int[][] paintGame= new int [][]{
-        {0 ,1 },{0 , 2},{1 , 0},{2 , 0},{2 , 2},{2 , 3},{3 , 0},{3, 3},
-        {4 , 1},{4 , 2},{6 , 1},{6 , 2},{7 ,0 },{7 ,3 },{8 ,0 },{8 , 1},
-        {8 , 2},{8 , 3},{9 , 0},{9 , 3},{11 , 0},{11 ,1 },{ 11,3 },{ 11,4 },
-        {12 ,0 },{12 , 2},{12 ,4 },{13 ,0 },{13 ,2 },{13 , 4},{14 ,0 },{14 ,4 },
-        {15 ,0 },{15 ,4 },{17 ,0 },{17 ,1 },{17 ,2 },{17 ,3 },{18 , 0},{19 , 0},
-        { 19, 1},{19 , 2},{20 , 0},{21 , 0},{21 ,1 },{21 , 2},{21 ,3 }
+    private static final int[][] paintGame = new int[][]{
+        {0, 1}, {0, 2}, {1, 0}, {2, 0}, {2, 2}, {2, 3}, {3, 0}, {3, 3},
+        {4, 1}, {4, 2}, {6, 1}, {6, 2}, {7, 0}, {7, 3}, {8, 0}, {8, 1},
+        {8, 2}, {8, 3}, {9, 0}, {9, 3}, {11, 0}, {11, 1}, {11, 3}, {11, 4},
+        {12, 0}, {12, 2}, {12, 4}, {13, 0}, {13, 2}, {13, 4}, {14, 0}, {14, 4},
+        {15, 0}, {15, 4}, {17, 0}, {17, 1}, {17, 2}, {17, 3}, {18, 0}, {19, 0},
+        {19, 1}, {19, 2}, {20, 0}, {21, 0}, {21, 1}, {21, 2}, {21, 3}
     };
     private static final int[][] paintOver = new int[][]{
-        {0 ,7 },{0 ,8 },{1 , 6},{1 , 9},{2 , 6},{2 , 9},{3 , 6},{3 , 9},{4 ,7 },
-        {4 , 8},{6 , 6},{6 , 9},{7 , 6},{7 , 9},{8 , 6},{8 , 9},{9 , 7},{9 , 8},
-        {11 , 6},{11 ,7 },{11 ,8 },{11 ,9 },{12 ,6 },{13 ,6 },{13 ,7 },{13 ,8 },{14 , 6},
-        {15 , 6},{ 15,7 },{ 15,8 },{15 ,9 },{17 , 6},{ 17,7 },{ 17, 8},{18 ,6 },{18 , 9},
-        {19 ,6 },{19 , 9},{20 ,6 },{ 20,7 },{20 , 8},{21 , 6},{21 , 9}
+        {0, 7}, {0, 8}, {1, 6}, {1, 9}, {2, 6}, {2, 9}, {3, 6}, {3, 9}, {4, 7},
+        {4, 8}, {6, 6}, {6, 9}, {7, 6}, {7, 9}, {8, 6}, {8, 9}, {9, 7}, {9, 8},
+        {11, 6}, {11, 7}, {11, 8}, {11, 9}, {12, 6}, {13, 6}, {13, 7}, {13, 8}, {14, 6},
+        {15, 6}, {15, 7}, {15, 8}, {15, 9}, {17, 6}, {17, 7}, {17, 8}, {18, 6}, {18, 9},
+        {19, 6}, {19, 9}, {20, 6}, {20, 7}, {20, 8}, {21, 6}, {21, 9}
     };
 
     public Board() {
@@ -144,12 +144,13 @@ public class Board extends JPanel implements ActionListener {
         timer = new Timer(50, new ActionListener() {
             int row = 0;
             int col = 0;
+
             @Override
             public void actionPerformed(ActionEvent ae) {
-                
+
                 currentShape = null;
-                if(row != NUM_ROWS && col != NUM_COLS){
-               matrix[row][col] = Tetrominoes.LShape;
+                if (row != NUM_ROWS && col != NUM_COLS) {
+                    matrix[row][col] = Tetrominoes.LShape;
 
                     if (col < NUM_COLS) {
                         col++;
@@ -160,47 +161,40 @@ public class Board extends JPanel implements ActionListener {
                     }
                     repaint();
 
-                }else{
-                     paintGame();
+                } else {
+                    paintGame();
+                    timer.stop();
                 }
-                
 
             }
         });
         timer.start();
 
     }
-public void paintGame() {
+
+    public void paintGame() {
         //timer.stop();
-       
+
         //rellenar  el matrix con GAME
         Timer timer2 = new Timer(50, new ActionListener() {
             int row = 0;
             int col = 0;
-            
+            int pointer = 0;
+
             @Override
             public void actionPerformed(ActionEvent ae) {
-                for(int[] coords: paintGame){
-                    int [] comparable={row,col};
-                    if(comparable== coords){
-                      matrix[row][col] = Tetrominoes.ZShape;  
-                       repaint();
-                    }
-                    
-                }
-                if (col < NUM_COLS) {
-                        col++;
-                    }
-                    if (col == NUM_COLS) {
-                        row++;
-                        col = 0;
-                    }
-
+                
+                matrix[paintGame[pointer]] = Tetrominoes.ZShape;
+                
+                if(pointer<paintGame.length){
+                pointer++;
+            }
             }
         });
         timer2.start();
 
     }
+
     private boolean canMoveTo(Shape shape, int newRow, int newCol) {
         if (newCol + shape.getXmin() < 0
                 || newCol + shape.getXmax() >= NUM_COLS
