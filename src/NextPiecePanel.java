@@ -37,14 +37,17 @@ public class NextPiecePanel extends JPanel {
     public void generateNextShape(){
         nextShape= new Shape();
     }
+    
     public Shape getNextShape(){
         if(nextShape!=null){
         Shape returned = nextShape;
         generateNextShape();
+        repaint();
         return returned;
         }else{
             generateNextShape();
-            return new Shape();
+            repaint();
+            return Shape.getRandomShape();
         }
     }
      public void cleanBoard() {

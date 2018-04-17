@@ -79,6 +79,7 @@ public class Board extends JPanel implements ActionListener {
     public MyKeyAdapter keyb;
     private Timer timer;
     private IncrementScorer scorerDelegate;
+    private NextPiecePanel nextPiecePanel;
     private static final int[][] paintGame = new int[][]{
         {0, 1}, {0, 2}, {1, 0}, {2, 0}, {2, 2}, {2, 3}, {3, 0}, {3, 3},
         {4, 1}, {4, 2}, {6, 1}, {6, 2}, {7, 0}, {7, 3}, {8, 0}, {8, 1},
@@ -103,9 +104,12 @@ public class Board extends JPanel implements ActionListener {
         timer = new Timer(deltaTime, this);
         MyKeyAdapter keyb = new MyKeyAdapter();
         addKeyListener(keyb);
+        
 
     }
-
+    public void setNextPiecePanel(NextPiecePanel p){
+        nextPiecePanel=p;
+    }
     public void setScorer(IncrementScorer scorer) {
         this.scorerDelegate = scorer;
     }
@@ -114,12 +118,13 @@ public class Board extends JPanel implements ActionListener {
         setFocusable(true);
         cleanBoard();
         deltaTime = 500;
-        currentShape = new Shape();
+        
         currentRow = INIT_ROW;
         currentCol = NUM_COLS / 2;
     }
 
     public void initGame() {
+        currentShape = nextPiecePanel.getNextShape();
         Toolkit.getDefaultToolkit().sync();
         addKeyListener(keyb);
         initValues();
@@ -283,7 +288,7 @@ public class Board extends JPanel implements ActionListener {
             if (!checkGameOver()) {
 
                 moveCurrentShapeToMatrix();
-                currentShape = new Shape();
+                currentShape = nextPiecePanel.getNextShape();
                 currentRow = INIT_ROW;
                 currentCol = NUM_COLS / 2;
                 checkRows();
