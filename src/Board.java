@@ -141,7 +141,7 @@ public class Board extends JPanel implements ActionListener {
         timer.stop();
         scorerDelegate.getScore();
         //rellenar todo el matrix en cascada utilizando cuadraditos y Añadir Game over dibujado en el matrix y la opcion de play again
-        timer = new Timer(50, new ActionListener() {
+        timer = new Timer(20, new ActionListener() {
             int row = 0;
             int col = 0;
 
@@ -162,8 +162,9 @@ public class Board extends JPanel implements ActionListener {
                     repaint();
 
                 } else {
-                    paintGame();
                     timer.stop();
+                    paintGame();
+                    
                 }
 
             }
@@ -176,7 +177,8 @@ public class Board extends JPanel implements ActionListener {
         //timer.stop();
 
         //rellenar  el matrix con GAME
-        Timer timer2 = new Timer(50, new ActionListener() {
+       
+        timer = new Timer(20, new ActionListener() {
             int row = 0;
             int col = 0;
             int pointer = 0;
@@ -184,14 +186,54 @@ public class Board extends JPanel implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 
-                matrix[paintGame[pointer]] = Tetrominoes.ZShape;
+                
+                if(pointer==paintGame.length){
+                    timer.stop();
+                   
+                    paintOver();
+                }else{
+                matrix[paintGame[pointer][0]][paintGame[pointer][1]] = Tetrominoes.ZShape;
+                repaint();
                 
                 if(pointer<paintGame.length){
-                pointer++;
+                    pointer++;
+                }
+                
             }
             }
         });
-        timer2.start();
+        timer.start();
+
+    }
+     public void paintOver() {
+        //timer.stop();
+
+        //rellenar  el matrix con GAME
+       
+        timer = new Timer(20, new ActionListener() {
+            int row = 0;
+            int col = 0;
+            int pointer = 0;
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                
+                
+                if(pointer==paintOver.length){
+                    timer.stop();
+                    
+                }else{
+                matrix[paintOver[pointer][0]][paintOver[pointer][1]] = Tetrominoes.ZShape;
+                repaint();
+                
+                if(pointer<paintOver.length){
+                    pointer++;
+                }
+                
+            }
+            }
+        });
+        timer.start();
 
     }
 
@@ -256,6 +298,7 @@ public class Board extends JPanel implements ActionListener {
             if (currentRow + squaresArray[point][1] < 0) {
                 timer.stop();
                 gameOver();
+                scorerDelegate.paintFinalScore();
                 return true;
 
             }

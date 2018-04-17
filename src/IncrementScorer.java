@@ -13,5 +13,6 @@ public interface IncrementScorer {
         public void increment(int points);
         public void reset();
         public int getScore();
+        public void paintFinalScore();
     
 }
