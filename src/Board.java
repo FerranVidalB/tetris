@@ -26,35 +26,45 @@ public class Board extends JPanel implements ActionListener {
         public void keyPressed(KeyEvent e) {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_LEFT:
-                    if (canMoveTo(currentShape, currentRow, currentCol - 1)) {
-                        currentCol--;
+                    if (isPlaying) {
+                        if (canMoveTo(currentShape, currentRow, currentCol - 1)) {
+                            currentCol--;
+                        }
                     }
 // whatever
                     break;
                 case KeyEvent.VK_RIGHT:
 // whatever         
-                    if (canMoveTo(currentShape, currentRow, currentCol + 1)) {
-                        currentCol++;
+                    if (isPlaying) {
+                        if (canMoveTo(currentShape, currentRow, currentCol + 1)) {
+                            currentCol++;
+                        }
                     }
                     break;
                 case KeyEvent.VK_UP:
 // whatever
-                    Shape rotShape = currentShape.rotateRight();
-                    if (canMoveTo(rotShape, currentRow, currentCol)) {
-                        currentShape = rotShape;
+                    if (isPlaying) {
+                        Shape rotShape = currentShape.rotateRight();
+                        if (canMoveTo(rotShape, currentRow, currentCol)) {
+                            currentShape = rotShape;
+                        }
                     }
                     break;
                 case KeyEvent.VK_DOWN:
 // whatever 
-                    if (canMoveTo(currentShape, currentRow + 1, currentCol)) {
-                        currentRow++;
+                    if (isPlaying) {
+                        if (canMoveTo(currentShape, currentRow + 1, currentCol)) {
+                            currentRow++;
+                        }
                     }
                     break;
                 case KeyEvent.VK_P:
-                    if (timer.isRunning()) {
-                        timer.stop();
-                    } else {
-                        timer.start();
+                    if (isPlaying) {
+                        if (timer.isRunning()) {
+                            timer.stop();
+                        } else {
+                            timer.start();
+                        }
                     }
                     break;
                 case KeyEvent.VK_ENTER:
@@ -80,6 +90,7 @@ public class Board extends JPanel implements ActionListener {
     private Timer timer;
     private IncrementScorer scorerDelegate;
     private NextPiecePanel nextPiecePanel;
+    private boolean isPlaying;
     private static final int[][] paintGame = new int[][]{
         {0, 1}, {0, 2}, {1, 0}, {2, 0}, {2, 2}, {2, 3}, {3, 0}, {3, 3},
         {4, 1}, {4, 2}, {6, 1}, {6, 2}, {7, 0}, {7, 3}, {8, 0}, {8, 1},
@@ -101,15 +112,17 @@ public class Board extends JPanel implements ActionListener {
         matrix = new Tetrominoes[NUM_ROWS][NUM_COLS];
         initValues();
         currentShape = null;
-        timer = new Timer(deltaTime, this);
+       timer=null;
         MyKeyAdapter keyb = new MyKeyAdapter();
         addKeyListener(keyb);
-        
+       
 
     }
-    public void setNextPiecePanel(NextPiecePanel p){
-        nextPiecePanel=p;
+
+    public void setNextPiecePanel(NextPiecePanel p) {
+        nextPiecePanel = p;
     }
+
     public void setScorer(IncrementScorer scorer) {
         this.scorerDelegate = scorer;
     }
@@ -118,18 +131,21 @@ public class Board extends JPanel implements ActionListener {
         setFocusable(true);
         cleanBoard();
         deltaTime = 500;
-        
+        isPlaying=false;
         currentRow = INIT_ROW;
         currentCol = NUM_COLS / 2;
     }
 
     public void initGame() {
+        
         currentShape = nextPiecePanel.getNextShape();
         Toolkit.getDefaultToolkit().sync();
         addKeyListener(keyb);
         initValues();
         scorerDelegate.reset();
+         timer = new Timer(deltaTime, this);
         timer.start();
+        isPlaying=true;
 
     }
 
@@ -169,7 +185,7 @@ public class Board extends JPanel implements ActionListener {
                 } else {
                     timer.stop();
                     paintGame();
-                    
+
                 }
 
             }
@@ -182,7 +198,6 @@ public class Board extends JPanel implements ActionListener {
         //timer.stop();
 
         //rellenar  el matrix con GAME
-       
         timer = new Timer(20, new ActionListener() {
             int row = 0;
             int col = 0;
@@ -190,31 +205,30 @@ public class Board extends JPanel implements ActionListener {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
-                
-                
-                if(pointer==paintGame.length){
+
+                if (pointer == paintGame.length) {
                     timer.stop();
-                   
+
                     paintOver();
-                }else{
-                matrix[paintGame[pointer][0]][paintGame[pointer][1]] = Tetrominoes.ZShape;
-                repaint();
-                
-                if(pointer<paintGame.length){
-                    pointer++;
+                } else {
+                    matrix[paintGame[pointer][0]][paintGame[pointer][1]] = Tetrominoes.ZShape;
+                    repaint();
+
+                    if (pointer < paintGame.length) {
+                        pointer++;
+                    }
+
                 }
-                
-            }
             }
         });
         timer.start();
 
     }
-     public void paintOver() {
+
+    public void paintOver() {
         //timer.stop();
 
         //rellenar  el matrix con GAME
-       
         timer = new Timer(20, new ActionListener() {
             int row = 0;
             int col = 0;
@@ -222,20 +236,19 @@ public class Board extends JPanel implements ActionListener {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
-                
-                
-                if(pointer==paintOver.length){
+
+                if (pointer == paintOver.length) {
                     timer.stop();
-                    
-                }else{
-                matrix[paintOver[pointer][0]][paintOver[pointer][1]] = Tetrominoes.ZShape;
-                repaint();
-                
-                if(pointer<paintOver.length){
-                    pointer++;
+
+                } else {
+                    matrix[paintOver[pointer][0]][paintOver[pointer][1]] = Tetrominoes.ZShape;
+                    repaint();
+
+                    if (pointer < paintOver.length) {
+                        pointer++;
+                    }
+
                 }
-                
-            }
             }
         });
         timer.start();
@@ -301,9 +314,12 @@ public class Board extends JPanel implements ActionListener {
         int[][] squaresArray = currentShape.getCoordinates();
         for (int point = 0; point <= 3; point++) {
             if (currentRow + squaresArray[point][1] < 0) {
+                isPlaying=false;
                 timer.stop();
                 gameOver();
                 scorerDelegate.paintFinalScore();
+                nextPiecePanel.cleanBoard();
+                
                 return true;
 
             }

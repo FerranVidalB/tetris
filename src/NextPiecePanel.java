@@ -19,6 +19,7 @@ public class NextPiecePanel extends JPanel {
     private Shape nextShape;
     
     
+    
     public static final int NUM_ROWS = 7;
     public static final int NUM_COLS = 6;
     private Tetrominoes[][] matrix;
@@ -27,6 +28,7 @@ public class NextPiecePanel extends JPanel {
         super();
         matrix = new Tetrominoes[NUM_ROWS][NUM_COLS];
         initValues();
+        
         
     }
     public void initValues(){
@@ -51,16 +53,19 @@ public class NextPiecePanel extends JPanel {
         }
     }
      public void cleanBoard() {
+         nextShape= null;
         for (int row = 0; row < NUM_ROWS; row++) {
             for (int col = 0; col < NUM_COLS; col++) {
                 matrix[row][col] = Tetrominoes.NoShape;
+                
             }
         }
-
+        repaint();
     }
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         drawBoard(g);
+        
         if (nextShape != null) {
             drawCurrentShape(g);
         }
