@@ -43,13 +43,13 @@ public class Board extends JPanel implements ActionListener {
                     break;
                 case KeyEvent.VK_SPACE:
                     if (isPlaying) {
-                        
+
                         while (canMoveTo(currentShape, currentRow + 1, currentCol)) {
                             currentRow++;
                         }
                     }
                     break;
-                    
+
                 case KeyEvent.VK_UP:
 // whatever
                     if (isPlaying) {
@@ -57,6 +57,13 @@ public class Board extends JPanel implements ActionListener {
                         if (canMoveTo(rotShape, currentRow, currentCol)) {
                             currentShape = rotShape;
                         }
+                    }
+                    break;
+                    case KeyEvent.VK_C:
+// whatever
+                    if (isPlaying) {
+                        
+                       currentShape=holdPanel.getHoldShape(currentShape);
                     }
                     break;
                 case KeyEvent.VK_DOWN:
@@ -99,6 +106,7 @@ public class Board extends JPanel implements ActionListener {
     private Timer timer;
     private IncrementScorer scorerDelegate;
     private NextPiecePanel nextPiecePanel;
+    private HoldPanel holdPanel;
     private boolean isPlaying;
     private static final int[][] paintGame = new int[][]{
         {0, 1}, {0, 2}, {1, 0}, {2, 0}, {2, 2}, {2, 3}, {3, 0}, {3, 3},
@@ -121,16 +129,21 @@ public class Board extends JPanel implements ActionListener {
         matrix = new Tetrominoes[NUM_ROWS][NUM_COLS];
         initValues();
         currentShape = null;
-       timer = new Timer(deltaTime, this);
+        timer = new Timer(deltaTime, this);
         MyKeyAdapter keyb = new MyKeyAdapter();
         addKeyListener(keyb);
-       
 
     }
 
     public void setNextPiecePanel(NextPiecePanel p) {
         nextPiecePanel = p;
     }
+    public void setHoldPanel(HoldPanel p) {
+        holdPanel = p;
+    }
+    
+    
+    
 
     public void setScorer(IncrementScorer scorer) {
         this.scorerDelegate = scorer;
@@ -140,22 +153,22 @@ public class Board extends JPanel implements ActionListener {
         setFocusable(true);
         cleanBoard();
         deltaTime = 500;
-        isPlaying=false;
+        isPlaying = false;
         currentRow = INIT_ROW;
         currentCol = NUM_COLS / 2;
-        
+
     }
 
     public void initGame() {
-        
+
         currentShape = nextPiecePanel.getNextShape();
         Toolkit.getDefaultToolkit().sync();
         addKeyListener(keyb);
         initValues();
         scorerDelegate.reset();
-         timer = new Timer(deltaTime, this);
+        timer = new Timer(deltaTime, this);
         timer.start();
-        isPlaying=true;
+        isPlaying = true;
 
     }
 
@@ -324,12 +337,12 @@ public class Board extends JPanel implements ActionListener {
         int[][] squaresArray = currentShape.getCoordinates();
         for (int point = 0; point <= 3; point++) {
             if (currentRow + squaresArray[point][1] < 0) {
-                isPlaying=false;
+                isPlaying = false;
                 timer.stop();
                 gameOver();
                 scorerDelegate.paintFinalScore();
                 nextPiecePanel.cleanBoard();
-                
+
                 return true;
 
             }
