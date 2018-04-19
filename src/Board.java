@@ -41,6 +41,15 @@ public class Board extends JPanel implements ActionListener {
                         }
                     }
                     break;
+                case KeyEvent.VK_SPACE:
+                    if (isPlaying) {
+                        
+                        while (canMoveTo(currentShape, currentRow + 1, currentCol)) {
+                            currentRow++;
+                        }
+                    }
+                    break;
+                    
                 case KeyEvent.VK_UP:
 // whatever
                     if (isPlaying) {
@@ -419,7 +428,7 @@ public class Board extends JPanel implements ActionListener {
     }
 
     private void drawSquare(Graphics g, int row, int col, Tetrominoes shape) {
-        Color colors[] = {new Color(0, 0, 0),
+        Color colors[] = {new Color(80, 80, 100),
             new Color(204, 102, 102),
             new Color(102, 204, 102), new Color(102, 102, 204),
             new Color(204, 204, 102), new Color(204, 102, 204),
