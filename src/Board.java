@@ -31,6 +31,7 @@ public class Board extends JPanel implements ActionListener {
                             currentCol--;
                         }
                     }
+                    calculateGhostRow();
 // whatever
                     break;
                 case KeyEvent.VK_RIGHT:
@@ -40,6 +41,7 @@ public class Board extends JPanel implements ActionListener {
                             currentCol++;
                         }
                     }
+                     calculateGhostRow();
                     break;
                 case KeyEvent.VK_SPACE:
                     if (isPlaying) {
@@ -58,13 +60,17 @@ public class Board extends JPanel implements ActionListener {
                             currentShape = rotShape;
                         }
                     }
+                    calculateGhostRow();
+                     
                     break;
-                    case KeyEvent.VK_C:
+                case KeyEvent.VK_C:
 // whatever
-                    if (isPlaying) {
-                        
-                       currentShape=holdPanel.getHoldShape(currentShape);
+                    if (isPlaying && canHold) {
+
+                        currentShape = holdPanel.getHoldShape(currentShape);
+                        canHold = false;
                     }
+                     calculateGhostRow();
                     break;
                 case KeyEvent.VK_DOWN:
 // whatever 
@@ -73,6 +79,7 @@ public class Board extends JPanel implements ActionListener {
                             currentRow++;
                         }
                     }
+                     
                     break;
                 case KeyEvent.VK_P:
                     if (isPlaying) {
@@ -90,6 +97,7 @@ public class Board extends JPanel implements ActionListener {
                     break;
                 default:
                     break;
+                    
             }
             repaint();
         }
@@ -108,6 +116,10 @@ public class Board extends JPanel implements ActionListener {
     private NextPiecePanel nextPiecePanel;
     private HoldPanel holdPanel;
     private boolean isPlaying;
+    private boolean canHold;
+    private int ghostRow;
+    
+    private Shape ghostShape;
     private static final int[][] paintGame = new int[][]{
         {0, 1}, {0, 2}, {1, 0}, {2, 0}, {2, 2}, {2, 3}, {3, 0}, {3, 3},
         {4, 1}, {4, 2}, {6, 1}, {6, 2}, {7, 0}, {7, 3}, {8, 0}, {8, 1},
@@ -138,12 +150,10 @@ public class Board extends JPanel implements ActionListener {
     public void setNextPiecePanel(NextPiecePanel p) {
         nextPiecePanel = p;
     }
+
     public void setHoldPanel(HoldPanel p) {
         holdPanel = p;
     }
-    
-    
-    
 
     public void setScorer(IncrementScorer scorer) {
         this.scorerDelegate = scorer;
@@ -158,6 +168,7 @@ public class Board extends JPanel implements ActionListener {
         currentCol = NUM_COLS / 2;
 
     }
+   
 
     public void initGame() {
 
@@ -169,6 +180,7 @@ public class Board extends JPanel implements ActionListener {
         timer = new Timer(deltaTime, this);
         timer.start();
         isPlaying = true;
+        canHold = true;
 
     }
 
@@ -278,6 +290,14 @@ public class Board extends JPanel implements ActionListener {
 
     }
 
+    private void calculateGhostRow(){
+     
+        
+         while (canMoveTo(currentShape, ghostRow + 1, currentCol)) {
+                            ghostRow++;
+                        }
+        
+    }
     private boolean canMoveTo(Shape shape, int newRow, int newCol) {
         if (newCol + shape.getXmin() < 0
                 || newCol + shape.getXmax() >= NUM_COLS
@@ -325,6 +345,7 @@ public class Board extends JPanel implements ActionListener {
 
                 moveCurrentShapeToMatrix();
                 currentShape = nextPiecePanel.getNextShape();
+                canHold = true;
                 currentRow = INIT_ROW;
                 currentCol = NUM_COLS / 2;
                 checkRows();
@@ -342,6 +363,7 @@ public class Board extends JPanel implements ActionListener {
                 gameOver();
                 scorerDelegate.paintFinalScore();
                 nextPiecePanel.cleanBoard();
+                holdPanel.cleanBoard();
 
                 return true;
 
@@ -413,7 +435,10 @@ public class Board extends JPanel implements ActionListener {
         super.paintComponent(g);
         drawBoard(g);
         if (currentShape != null) {
-            drawCurrentShape(g);
+            currentShape.draw(g, currentRow, currentCol, squareWidth(), squareHeight());
+            currentShape.draw(g, ghostRow, currentCol, squareWidth(), squareHeight());
+            
+            
         }
         drawBorder(g);
     }
@@ -423,44 +448,13 @@ public class Board extends JPanel implements ActionListener {
         g.drawRect(0, 0, NUM_COLS * squareWidth(), NUM_ROWS * squareHeight());
     }
 
-    public void drawCurrentShape(Graphics g) {
-        int[][] squaresArray = currentShape.getCoordinates();
-        for (int point = 0; point <= 3; point++) {
-            drawSquare(g, currentRow + squaresArray[point][1], currentCol + squaresArray[point][0], currentShape.getShape());
-        }
-
-    }
-
     public void drawBoard(Graphics g) {
         for (int row = 0; row < NUM_ROWS; row++) {
             for (int col = 0; col < NUM_COLS; col++) {
 
-                drawSquare(g, row, col, matrix[row][col]);
+                Util.drawSquare(g, row, col, matrix[row][col], squareWidth(), squareHeight());
             }
         }
-    }
-
-    private void drawSquare(Graphics g, int row, int col, Tetrominoes shape) {
-        Color colors[] = {new Color(80, 80, 100),
-            new Color(204, 102, 102),
-            new Color(102, 204, 102), new Color(102, 102, 204),
-            new Color(204, 204, 102), new Color(204, 102, 204),
-            new Color(102, 204, 204), new Color(218, 170, 0)
-        };
-        int x = col * squareWidth();
-        int y = row * squareHeight();
-        Color color = colors[shape.ordinal()];
-        g.setColor(color);
-        g.fillRect(x + 1, y + 1, squareWidth() - 2, squareHeight() - 2);
-        g.setColor(color.brighter());
-        g.drawLine(x, y + squareHeight() - 1, x, y);
-        g.drawLine(x, y, x + squareWidth() - 1, y);
-        g.setColor(color.darker());
-        g.drawLine(x + 1, y + squareHeight() - 1,
-                x + squareWidth() - 1, y + squareHeight() - 1);
-        g.drawLine(x + squareWidth() - 1,
-                y + squareHeight() - 1,
-                x + squareWidth() - 1, y + 1);
     }
 
     private int squareWidth() {

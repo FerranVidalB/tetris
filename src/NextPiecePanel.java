@@ -20,8 +20,8 @@ public class NextPiecePanel extends JPanel {
     
     
     
-    public static final int NUM_ROWS = 7;
-    public static final int NUM_COLS = 6;
+    public static final int NUM_ROWS = 6;
+    public static final int NUM_COLS = 5;
     private Tetrominoes[][] matrix;
     
     public NextPiecePanel(){
@@ -67,7 +67,7 @@ public class NextPiecePanel extends JPanel {
         drawBoard(g);
         
         if (nextShape != null) {
-            drawCurrentShape(g);
+            nextShape.draw(g, 2, 2, squareWidth(), squareHeight());
         }
         drawBorder(g);
     }
@@ -77,44 +77,15 @@ public class NextPiecePanel extends JPanel {
         g.drawRect(0, 0, NUM_COLS * squareWidth(), NUM_ROWS * squareHeight());
     }
 
-    public void drawCurrentShape(Graphics g) {
-        int[][] squaresArray = nextShape.getCoordinates();
-        for (int point = 0; point <= 3; point++) {
-           drawSquare(g, 3 + squaresArray[point][1], 3 + squaresArray[point][0], nextShape.getShape());
-        }
-
-    }
+   
 
     public void drawBoard(Graphics g) {
         for (int row = 0; row < NUM_ROWS; row++) {
             for (int col = 0; col < NUM_COLS; col++) {
 
-                drawSquare(g, row, col, matrix[row][col]);
+                Util.drawSquare(g, row, col, matrix[row][col], squareWidth(), squareHeight());
             }
         }
-    }
-
-    private void drawSquare(Graphics g, int row, int col, Tetrominoes shape) {
-        Color colors[] = {new Color(0, 0, 0),
-            new Color(204, 102, 102),
-            new Color(102, 204, 102), new Color(102, 102, 204),
-            new Color(204, 204, 102), new Color(204, 102, 204),
-            new Color(102, 204, 204), new Color(218, 170, 0)
-        };
-        int x = col * squareWidth();
-        int y = row * squareHeight();
-        Color color = colors[shape.ordinal()];
-        g.setColor(color);
-        g.fillRect(x + 1, y + 1, squareWidth() - 2, squareHeight() - 2);
-        g.setColor(color.brighter());
-        g.drawLine(x, y + squareHeight() - 1, x, y);
-        g.drawLine(x, y, x + squareWidth() - 1, y);
-        g.setColor(color.darker());
-        g.drawLine(x + 1, y + squareHeight() - 1,
-                x + squareWidth() - 1, y + squareHeight() - 1);
-        g.drawLine(x + squareWidth() - 1,
-                y + squareHeight() - 1,
-                x + squareWidth() - 1, y + 1);
     }
 
     private int squareWidth() {
