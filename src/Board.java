@@ -112,7 +112,7 @@ public class Board extends JPanel implements ActionListener {
         matrix = new Tetrominoes[NUM_ROWS][NUM_COLS];
         initValues();
         currentShape = null;
-       timer=null;
+       timer = new Timer(deltaTime, this);
         MyKeyAdapter keyb = new MyKeyAdapter();
         addKeyListener(keyb);
        
@@ -134,6 +134,7 @@ public class Board extends JPanel implements ActionListener {
         isPlaying=false;
         currentRow = INIT_ROW;
         currentCol = NUM_COLS / 2;
+        
     }
 
     public void initGame() {
