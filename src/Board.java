@@ -359,6 +359,13 @@ public class Board extends JPanel implements ActionListener {
                 currentRow = INIT_ROW;
                 currentCol = NUM_COLS / 2;
                 checkRows();
+                
+                if(scorerDelegate.getScore()>scorerDelegate.getLevel()*500){
+                    scorerDelegate.incrementLevel();
+                    decrementDelay();
+                }
+                
+                
             }
         }
         calculateGhostRow();
@@ -413,15 +420,15 @@ public class Board extends JPanel implements ActionListener {
         }
 
         scorerDelegate.increment(100);
-
-        decrementDelay();
+        scorerDelegate.incrementLines();
+        
 
         repaint();
 
     }
 
     public void decrementDelay() {
-        deltaTime *= 0.9;
+        deltaTime *= 0.8;
         timer.setDelay(deltaTime);
     }
 
