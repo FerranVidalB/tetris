@@ -35,4 +35,20 @@ public class Util {
                 y + squareHeight - 1,
                 x + squareWidth - 1, y + 1);
     }
+     public  static void drawGhost(Graphics g, int row, int col, Tetrominoes shape, int squareWidth, int squareHeight) {
+        Color colors[] = {new Color(80, 80, 100),
+            new Color(204, 102, 102),
+            new Color(102, 204, 102), new Color(102, 102, 204),
+            new Color(204, 204, 102), new Color(204, 102, 204),
+            new Color(102, 204, 204), new Color(218, 170, 0)
+        };
+        int x = col * squareWidth;
+        int y = row * squareHeight;
+        Color color = colors[shape.ordinal()];
+        //g.setColor(color.darker());
+       
+        g.setColor(color.brighter());
+        g.drawRect(x, y, squareWidth, squareHeight);
+       
+    }
 }

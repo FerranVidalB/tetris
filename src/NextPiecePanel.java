@@ -52,6 +52,10 @@ public class NextPiecePanel extends JPanel {
             return Shape.getRandomShape();
         }
     }
+    public Shape seeNextShape(){
+        return nextShape;
+    }
+    
      public void cleanBoard() {
          nextShape= null;
         for (int row = 0; row < NUM_ROWS; row++) {
@@ -67,7 +71,7 @@ public class NextPiecePanel extends JPanel {
         drawBoard(g);
         
         if (nextShape != null) {
-            nextShape.draw(g, 2, 2, squareWidth(), squareHeight());
+            nextShape.draw(g, 2, 2, squareWidth(), squareHeight(),false);
         }
         drawBorder(g);
     }

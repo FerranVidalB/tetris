@@ -41,7 +41,7 @@ public class Board extends JPanel implements ActionListener {
                             currentCol++;
                         }
                     }
-                     calculateGhostRow();
+                    calculateGhostRow();
                     break;
                 case KeyEvent.VK_SPACE:
                     if (isPlaying) {
@@ -61,16 +61,20 @@ public class Board extends JPanel implements ActionListener {
                         }
                     }
                     calculateGhostRow();
-                     
+
                     break;
                 case KeyEvent.VK_C:
 // whatever
                     if (isPlaying && canHold) {
 
-                        currentShape = holdPanel.getHoldShape(currentShape);
-                        canHold = false;
+                        
+                            if (canMoveTo(holdPanel.seeHoldedShape(), currentRow, currentCol)) {
+                                currentShape = holdPanel.getHoldShape(currentShape);
+                                canHold = false;
+                            }
+                        
                     }
-                     calculateGhostRow();
+                    calculateGhostRow();
                     break;
                 case KeyEvent.VK_DOWN:
 // whatever 
@@ -79,7 +83,7 @@ public class Board extends JPanel implements ActionListener {
                             currentRow++;
                         }
                     }
-                     
+
                     break;
                 case KeyEvent.VK_P:
                     if (isPlaying) {
@@ -97,7 +101,7 @@ public class Board extends JPanel implements ActionListener {
                     break;
                 default:
                     break;
-                    
+
             }
             repaint();
         }
@@ -118,7 +122,7 @@ public class Board extends JPanel implements ActionListener {
     private boolean isPlaying;
     private boolean canHold;
     private int ghostRow;
-    
+
     private Shape ghostShape;
     private static final int[][] paintGame = new int[][]{
         {0, 1}, {0, 2}, {1, 0}, {2, 0}, {2, 2}, {2, 3}, {3, 0}, {3, 3},
@@ -162,17 +166,18 @@ public class Board extends JPanel implements ActionListener {
     public void initValues() {
         setFocusable(true);
         cleanBoard();
+        
         deltaTime = 500;
         isPlaying = false;
         currentRow = INIT_ROW;
         currentCol = NUM_COLS / 2;
 
     }
-   
 
     public void initGame() {
 
         currentShape = nextPiecePanel.getNextShape();
+        calculateGhostRow();
         Toolkit.getDefaultToolkit().sync();
         addKeyListener(keyb);
         initValues();
@@ -181,6 +186,8 @@ public class Board extends JPanel implements ActionListener {
         timer.start();
         isPlaying = true;
         canHold = true;
+        holdPanel.cleanBoard();
+        
 
     }
 
@@ -290,14 +297,15 @@ public class Board extends JPanel implements ActionListener {
 
     }
 
-    private void calculateGhostRow(){
-     
-        
-         while (canMoveTo(currentShape, ghostRow + 1, currentCol)) {
-                            ghostRow++;
-                        }
-        
+    private void calculateGhostRow() {
+
+        ghostRow = currentRow;
+        while (canMoveTo(currentShape, ghostRow + 1, currentCol)) {
+            ghostRow++;
+        }
+
     }
+
     private boolean canMoveTo(Shape shape, int newRow, int newCol) {
         if (newCol + shape.getXmin() < 0
                 || newCol + shape.getXmax() >= NUM_COLS
@@ -338,6 +346,7 @@ public class Board extends JPanel implements ActionListener {
         if (canMoveTo(currentShape, currentRow + 1, currentCol)) {
 
             currentRow++;
+
             repaint();
         } else {
 
@@ -345,13 +354,14 @@ public class Board extends JPanel implements ActionListener {
 
                 moveCurrentShapeToMatrix();
                 currentShape = nextPiecePanel.getNextShape();
+                scorerDelegate.increment(12);
                 canHold = true;
                 currentRow = INIT_ROW;
                 currentCol = NUM_COLS / 2;
                 checkRows();
             }
         }
-
+        calculateGhostRow();
     }
 
     public boolean checkGameOver() {
@@ -435,10 +445,9 @@ public class Board extends JPanel implements ActionListener {
         super.paintComponent(g);
         drawBoard(g);
         if (currentShape != null) {
-            currentShape.draw(g, currentRow, currentCol, squareWidth(), squareHeight());
-            currentShape.draw(g, ghostRow, currentCol, squareWidth(), squareHeight());
-            
-            
+            currentShape.draw(g, currentRow, currentCol, squareWidth(), squareHeight(), false);
+            currentShape.draw(g, ghostRow, currentCol, squareWidth(), squareHeight(), true);
+
         }
         drawBorder(g);
     }

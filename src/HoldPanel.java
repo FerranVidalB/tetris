@@ -52,6 +52,14 @@ public class HoldPanel extends JPanel {
         }
     }
 
+    public Shape seeHoldedShape() {
+        if (holdShape != null) {
+            return holdShape;
+        } else {
+            return nextPiecePanel.seeNextShape();
+        }
+    }
+
     public void cleanBoard() {
         holdShape = null;
         for (int row = 0; row < NUM_ROWS; row++) {
@@ -68,7 +76,7 @@ public class HoldPanel extends JPanel {
         drawBoard(g);
 
         if (holdShape != null) {
-           holdShape.draw(g, 2, 2, squareWidth(), squareHeight());
+            holdShape.draw(g, 2, 2, squareWidth(), squareHeight(), false);
         }
         drawBorder(g);
     }
@@ -78,8 +86,6 @@ public class HoldPanel extends JPanel {
         g.drawRect(0, 0, NUM_COLS * squareWidth(), NUM_ROWS * squareHeight());
     }
 
-  
-
     public void drawBoard(Graphics g) {
         for (int row = 0; row < NUM_ROWS; row++) {
             for (int col = 0; col < NUM_COLS; col++) {
@@ -88,8 +94,6 @@ public class HoldPanel extends JPanel {
             }
         }
     }
-
-    
 
     private int squareWidth() {
         return getWidth() / NUM_COLS;

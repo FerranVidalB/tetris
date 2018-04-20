@@ -130,14 +130,21 @@ public class Shape {
         }
         return rotatedShape;
     }
-    public void draw(Graphics g,int row, int col, int squareWidth, int squareHeight) {
+    public void draw(Graphics g,int row, int col, int squareWidth, int squareHeight, boolean ghost) {
+        
         
         for (int point = 0; point <= 3; point++) {
+            if(ghost){
+                Util.drawGhost(g, row + coordinates[point][1], col + coordinates[point][0], pieceShape, 
+                    squareWidth, squareHeight);
+            }else{
             Util.drawSquare(g, row + coordinates[point][1], col + coordinates[point][0], pieceShape, 
                     squareWidth, squareHeight);
+            }
         }
 
     }
+    
 
 
 }
