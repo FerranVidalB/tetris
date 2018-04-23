@@ -106,6 +106,12 @@ public class Board extends JPanel implements ActionListener {
             repaint();
         }
     }
+    
+    private JFrame parentFrame;
+
+    public void setParentFrame(JFrame parentFrame) {
+        this.parentFrame = parentFrame;
+    }
     public static final int NUM_ROWS = 22;
     public static final int NUM_COLS = 10;
     public static final int INIT_ROW = -2;
@@ -281,6 +287,8 @@ public class Board extends JPanel implements ActionListener {
 
                 if (pointer == paintOver.length) {
                     timer.stop();
+                    RecordsDialog d = new RecordsDialog(parentFrame, true, scorerDelegate.getScore());
+                    d.setVisible(true);
 
                 } else {
                     matrix[paintOver[pointer][0]][paintOver[pointer][1]] = Tetrominoes.ZShape;

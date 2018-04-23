@@ -19,6 +19,7 @@ public class Tetris extends javax.swing.JFrame {
         board.setNextPiecePanel(nextPiecePanel);
         board.setHoldPanel(holdPanel);
         holdPanel.setNextPiecePanel(nextPiecePanel);
+        board.setParentFrame(this);
         
     }
 
